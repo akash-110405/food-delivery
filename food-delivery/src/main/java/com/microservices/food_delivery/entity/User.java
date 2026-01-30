@@ -37,10 +37,3 @@ public class User {
     }
 
 }
-
-
-
-
-
-
-

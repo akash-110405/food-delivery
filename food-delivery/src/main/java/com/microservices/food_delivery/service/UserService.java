@@ -1,8 +1,6 @@
 package com.microservices.food_delivery.service;
 
-
 import com.microservices.food_delivery.entity.Role;
-
 import com.microservices.food_delivery.entity.User;
 import com.microservices.food_delivery.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
