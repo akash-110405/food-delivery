@@ -8,5 +8,5 @@ import java.util.List;
 public interface FoodRepository extends JpaRepository<Food,Long> {
 
     List<Food> findByAvailableTrue();
-    List<Food> findCategoryById(Long categoryId);
+    List<Food> findByCategoryId(Long categoryId);
 }
