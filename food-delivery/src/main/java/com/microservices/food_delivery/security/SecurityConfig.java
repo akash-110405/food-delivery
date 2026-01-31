@@ -16,7 +16,7 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
-                        .requestMatchers("/api/foods").authenticated()
+                        .requestMatchers("/api/foods").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
