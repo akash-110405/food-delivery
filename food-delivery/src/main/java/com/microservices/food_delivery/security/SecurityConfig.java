@@ -1,6 +1,5 @@
-package com.microservices.food_delivery.config;
+package com.microservices.food_delivery.security;
 
-import com.microservices.food_delivery.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +16,7 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
-                        .requestMatchers("/api/foods").hasRole("ADMIN")
+                        .requestMatchers("/api/foods").authenticated()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
