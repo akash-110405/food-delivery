@@ -1,8 +1,9 @@
 package com.microservices.food_delivery.security;
 
+import com.microservices.food_delivery.entity.User;
+import com.microservices.food_delivery.repository.UserRepository;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ public class JwtAuthenticationFilter extends GenericFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -31,6 +33,14 @@ public class JwtAuthenticationFilter extends GenericFilter {
 
             String token = header.substring(7);
             String email = jwtUtil.extractEmail(token);
+            Integer tokenVersion = jwtUtil.extractTokenVersion(token);
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (!tokenVersion.equals(user.getTokenVersion())) {
+                throw new RuntimeException("Token expired");
+            }
 
             var userDetails = userDetailsService.loadUserByUsername(email);
 

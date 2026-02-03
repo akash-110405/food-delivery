@@ -6,5 +6,7 @@ import lombok.Data;
 public class NotificationRequest {
 
     private String token;
+    private Long userId;
     private String title;
-    private String body; }
+    private String body;
+}

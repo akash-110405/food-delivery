@@ -28,6 +28,8 @@ public class User {
     private String password;
     private String otp;
 
+    private Integer tokenVersion = 0;
+
     @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDateTime create_at;

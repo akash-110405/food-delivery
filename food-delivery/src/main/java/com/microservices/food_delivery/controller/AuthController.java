@@ -2,8 +2,11 @@ package com.microservices.food_delivery.controller;
 
 import com.microservices.food_delivery.dto.LoginRequest;
 import com.microservices.food_delivery.dto.RegisterRequest;
+import com.microservices.food_delivery.entity.User;
+import com.microservices.food_delivery.repository.UserRepository;
 import com.microservices.food_delivery.security.JwtUtil;
 import com.microservices.food_delivery.service.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,11 +20,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Data
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest request){
@@ -46,7 +51,16 @@ public class AuthController {
                 )
         );
 
-        String token = jwtUtil.generateToken(request.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setTokenVersion(user.getTokenVersion() + 1);
+        userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail(),user.getTokenVersion());
         return Map.of("token", token);
     }
+
+
+
 }

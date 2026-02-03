@@ -1,5 +1,6 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.OrderRequest;
 import com.microservices.food_delivery.entity.Order;
 import com.microservices.food_delivery.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Order placeOrder(@RequestBody Double totalAmount, Authentication authentication){
+    public Order placeOrder(@RequestBody OrderRequest orderRequest, Authentication authentication){
 
         String email = authentication.getName();
-        return orderService.placeOrder(email, totalAmount);
+        return orderService.placeOrder(email, orderRequest.getTotalAmount());
     }
 }

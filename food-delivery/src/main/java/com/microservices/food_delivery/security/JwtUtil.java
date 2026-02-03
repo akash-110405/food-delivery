@@ -12,12 +12,13 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor("secret-key-jwt-authorize-secret-key-jwt-authorize".getBytes());
 
-    public String generateToken(String email){
+    public String generateToken(String email , Integer tokenVersion){
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("version",tokenVersion)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 120000))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(key)
                 .compact();
     }
@@ -29,4 +30,14 @@ public class JwtUtil {
                 .getBody()
                 .getSubject();
     }
+
+    public Integer extractTokenVersion(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("version", Integer.class);
+    }
+
 }

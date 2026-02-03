@@ -1,5 +1,6 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.CartRequest;
 import com.microservices.food_delivery.entity.Cart;
 import com.microservices.food_delivery.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,11 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public Cart addToCart(@RequestBody Long foodId,
-                          @RequestBody Integer quantity,
+    public Cart addToCart(@RequestBody CartRequest cartRequest,
                           Authentication authentication) {
 
         String email = authentication.getName();
-        return cartService.addToCart(email, foodId, quantity);
+        return cartService.addToCart(email, cartRequest.getFoodId(), cartRequest.getQuantity());
     }
 
     @GetMapping

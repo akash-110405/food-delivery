@@ -1,12 +1,10 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.NotificationRequest;
 import com.microservices.food_delivery.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/notification")
@@ -17,11 +15,14 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping("/send")
-    public ResponseEntity<?> sendNotification(@RequestParam Long userId,
-                                              @RequestParam String title,
-                                              @RequestParam String body){
+    public ResponseEntity<?> sendNotification(@RequestBody NotificationRequest notificationRequest){
 
-        notificationService.notifyUser(userId,title,body);
+        notificationService.notifyUser(
+                notificationRequest.getUserId(),
+                notificationRequest.getTitle(),
+                notificationRequest.getBody()
+        );
+
         return ResponseEntity.ok("Notification sent successfully");
     }
 }

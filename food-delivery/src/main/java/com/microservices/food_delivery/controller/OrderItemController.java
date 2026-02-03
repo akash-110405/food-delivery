@@ -1,5 +1,6 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.OrderItemRequest;
 import com.microservices.food_delivery.entity.OrderItem;
 import com.microservices.food_delivery.service.OrderItemService;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,11 @@ public class OrderItemController {
     private final OrderItemService orderItemService;
 
     @PostMapping
-    public OrderItem addOrderItem(@RequestBody Long orderId,
-                                  @RequestBody Long foodId,
-                                  @RequestBody Integer quantity){
-        return orderItemService.addItem(orderId, foodId, quantity);
+    public OrderItem addOrderItem(@RequestBody OrderItemRequest orderItemRequest){
+        return orderItemService.addItem(
+                orderItemRequest.getUserId(),
+                orderItemRequest.getFoodId(),
+                orderItemRequest.getQuantity());
     }
 
     @GetMapping("/order/{orderId}")
