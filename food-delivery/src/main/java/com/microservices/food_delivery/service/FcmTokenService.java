@@ -13,22 +13,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FcmTokenService {
 
-    private final FcmTokenRepository repository;
+    private final FcmTokenRepository fcmTokenRepository;
     private final UserRepository userRepository;
 
-    public void saveToken(String token, Long userId) {
+    public void saveToken(String token, String email) {
 
-        if (repository.findByToken(token).isPresent()) return;
+        System.out.println("FCM TOKEN: " + token);
+        System.out.println("EMAIL: " + email);
 
-        User user = userRepository.findById(userId)
+        if (fcmTokenRepository.findByToken(token).isPresent()) return;
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         FcmToken fcmToken = new FcmToken(null, user, token);
-        repository.save(fcmToken);
+        fcmTokenRepository.save(fcmToken);
     }
 
+
     public List<String> getUserTokens(Long userId) {
-        return repository.findByUserId(userId)
+        return fcmTokenRepository.findByUserId(userId)
                 .stream()
                 .map(FcmToken::getToken)
                 .toList();
