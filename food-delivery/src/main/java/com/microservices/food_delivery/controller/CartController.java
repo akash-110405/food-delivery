@@ -15,8 +15,8 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public Cart addToCart(@RequestParam Long foodId,
-                          @RequestParam Integer quantity,
+    public Cart addToCart(@RequestBody Long foodId,
+                          @RequestBody Integer quantity,
                           Authentication authentication) {
 
         String email = authentication.getName();
@@ -30,6 +30,7 @@ public class CartController {
 
     @DeleteMapping("/{cartId}")
     public String removeItem(@PathVariable Long cartId) {
+
         return "Removed";
     }
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "fcm_tokens")
+@Table(name = "fcm_token")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
