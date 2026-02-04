@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import com.microservices.food_delivery.entity.Role;
 
@@ -22,11 +24,16 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false,unique = true,length = 15)
     private String phoneNumber;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false,unique = true,length = 6)
     private String otp;
+    private LocalDateTime otpexpiry;
 
     private Integer tokenVersion = 0;
 
@@ -38,5 +45,6 @@ public class User {
     public void onCreate() {
         this.create_at = LocalDateTime.now();
     }
+
 
 }
