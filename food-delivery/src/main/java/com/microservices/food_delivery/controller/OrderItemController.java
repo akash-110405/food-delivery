@@ -18,7 +18,7 @@ public class OrderItemController {
     @PostMapping
     public OrderItem addOrderItem(@RequestBody OrderItemRequest orderItemRequest){
         return orderItemService.addItem(
-                orderItemRequest.getUserId(),
+                orderItemRequest.getOrderId(),
                 orderItemRequest.getFoodId(),
                 orderItemRequest.getQuantity());
     }

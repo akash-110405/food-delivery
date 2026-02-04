@@ -36,6 +36,4 @@ public class Order {
     public void onCreate(){
         this.create_at = LocalDateTime.now();
     }
-
-
 }
