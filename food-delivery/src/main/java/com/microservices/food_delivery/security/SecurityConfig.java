@@ -12,21 +12,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception{
-        http.csrf(csrf ->csrf.disable())
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
-                        .requestMatchers("/api/foods").authenticated()
-                        .requestMatchers("/api/cart/**", "/api/fcm/**", "/api/notification/**").permitAll()
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter
+    ) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(
+                                "/api/foods/**",
+                                "/api/cart/**",
+                                "/api/fcm/**",
+                                "/api/notification/**"
+                        ).authenticated()
                         .anyRequest().authenticated()
-                ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-        throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
         return config.getAuthenticationManager();
     }
 }

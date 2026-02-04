@@ -72,7 +72,6 @@ public class AuthService {
         );
     }
 
-
     public String requestPhoneOtp(String phone) {
 
         User user = userRepository.findByPhoneNumber(phone)
@@ -94,6 +93,12 @@ public class AuthService {
         User user = userRepository.findByPhoneNumber(phone)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println("EMAIL = " + user.getEmail());
+        System.out.println("PHONE = " + user.getPhoneNumber());
+        System.out.println("ROLE = " + user.getRole());
+        System.out.println("TOKEN_VERSION = " + user.getTokenVersion());
+
+
         validateOtp(user, otp);
         clearOtp(user);
 
@@ -101,7 +106,7 @@ public class AuthService {
         userRepository.save(user);
 
         return jwtUtil.generateToken(
-                user.getPhoneNumber(),
+                user.getEmail(),
                 user.getTokenVersion()
         );
     }
@@ -125,4 +130,3 @@ public class AuthService {
         userRepository.save(user);
     }
 }
-

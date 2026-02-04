@@ -23,6 +23,7 @@ public class AuthController {
         userService.register(
                 request.getName(),
                 request.getEmail(),
+                request.getPhoneNumber(),
                 request.getPassword()
         );
         return "Registered successfully";

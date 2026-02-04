@@ -25,13 +25,13 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false,unique = true,length = 15)
+    @Column(nullable = false, unique = true,length = 15)
     private String phoneNumber;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false,unique = true,length = 6)
+    @Column(length = 6)
     private String otp;
     private LocalDateTime otpexpiry;
 

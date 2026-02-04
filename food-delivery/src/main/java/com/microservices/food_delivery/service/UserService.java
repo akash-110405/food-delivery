@@ -14,11 +14,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User register(String name, String email, String password) {
+    public User register(String name, String email, String phoneNumber,String password) {
 
         User user = new User();
         user.setName(name);
         user.setEmail(email);
+        user.setPhoneNumber(phoneNumber);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(Role.USER);
         return userRepository.save(user);
