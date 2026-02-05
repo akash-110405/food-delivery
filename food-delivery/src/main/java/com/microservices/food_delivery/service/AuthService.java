@@ -111,7 +111,6 @@ public class AuthService {
         );
     }
 
-
     private void validateOtp(User user, String otp) {
 
         if (user.getOtp() == null)

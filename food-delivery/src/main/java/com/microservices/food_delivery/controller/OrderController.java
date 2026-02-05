@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping ("/api/orders")
 @RequiredArgsConstructor
@@ -19,5 +22,9 @@ public class OrderController {
 
         String email = authentication.getName();
         return orderService.placeOrder(email, orderRequest.getTotalAmount());
+    }
+    @GetMapping
+    public List<Order> getAllOrders(){
+        return orderService.getAllOrders();
     }
 }

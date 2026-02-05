@@ -9,6 +9,9 @@ import com.microservices.food_delivery.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -31,5 +34,11 @@ public class OrderService {
 
     }
 
+    public Optional<Order> getOrders(Long id) {
+        return orderRepository.findById(id);
+    }
 
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
 }
