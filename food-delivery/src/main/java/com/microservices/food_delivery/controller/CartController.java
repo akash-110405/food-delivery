@@ -1,9 +1,13 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.ApiResponse;
 import com.microservices.food_delivery.dto.CartRequest;
 import com.microservices.food_delivery.entity.Cart;
+import com.microservices.food_delivery.security.SecurityUtil;
 import com.microservices.food_delivery.service.CartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,22 +20,50 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public Cart addToCart(@RequestBody CartRequest cartRequest,
-                          Authentication authentication) {
+    public ResponseEntity<ApiResponse<Cart>> addToCart(@RequestBody CartRequest cartRequest,
+                                                     Authentication authentication) {
 
         String email = authentication.getName();
-        return cartService.addToCart(email, cartRequest.getFoodId(), cartRequest.getQuantity());
+        Cart addToCart = cartService.addToCart(email, cartRequest.getFoodId(), cartRequest.getQuantity());
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Cart added successfully",
+                        HttpStatus.CREATED,
+                        role,
+                        addToCart
+                )
+        );
     }
 
     @GetMapping
-    public List<Cart> viewCart(Authentication authentication) {
-        return cartService.getUserCart(authentication.getName());
+    public ResponseEntity<ApiResponse<List<Cart>>> viewCart(Authentication authentication) {
+        List<Cart> viewCart =  cartService.getUserCart(authentication.getName());
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Foods fetched successfully",
+                        HttpStatus.MULTIPLE_CHOICES,
+                        role,
+                        viewCart
+                )
+        );
     }
 
     @DeleteMapping("/{cartId}")
-    public String removeItem(@PathVariable Long cartId) {
+    public ResponseEntity<ApiResponse<String>> removeItem(@PathVariable Long cartId) {
+        String role = SecurityUtil.getCurrentUserRole();
 
-        return "Removed";
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Cart Removed",
+                        HttpStatus.GONE,
+                        role,
+                        null
+                )
+        );
     }
 }
 

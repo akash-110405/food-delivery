@@ -4,6 +4,7 @@ import com.microservices.food_delivery.dto.*;
 import com.microservices.food_delivery.service.AuthService;
 import com.microservices.food_delivery.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,12 +31,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody LoginRequest request) {
-        String token = authService.loginWithEmailPassword(
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        AuthResponse response = authService.loginWithEmailPassword(
                 request.getEmail(),
                 request.getPassword()
         );
-        return Map.of("token", token);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -45,14 +46,14 @@ public class AuthController {
     }
 
     @PostMapping("/email/verify-otp")
-    public Map<String, String> verifyEmailOtp(
+    public ResponseEntity<AuthResponse> verifyEmailOtp(
             @RequestBody EmailOtpVerifyRequest request) {
 
-        String token = authService.verifyEmailOtp(
+        AuthResponse response = authService.verifyEmailOtp(
                 request.getEmail(),
                 request.getOtp()
         );
-        return Map.of("token", token);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/phone/request-otp")
@@ -61,13 +62,13 @@ public class AuthController {
     }
 
     @PostMapping("/phone/verify-otp")
-    public Map<String, String> verifyPhoneOtp(
+    public ResponseEntity<AuthResponse> verifyPhoneOtp(
             @RequestBody PhoneOtpVerifyRequest request) {
 
-        String token = authService.verifyPhoneOtp(
+        AuthResponse response = authService.verifyPhoneOtp(
                 request.getPhoneNumber(),
                 request.getOtp()
         );
-        return Map.of("token", token);
+        return ResponseEntity.ok(response);
     }
 }

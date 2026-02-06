@@ -1,9 +1,12 @@
 package com.microservices.food_delivery.controller;
 
+import com.microservices.food_delivery.dto.ApiResponse;
 import com.microservices.food_delivery.entity.Food;
+import com.microservices.food_delivery.security.SecurityUtil;
 import com.microservices.food_delivery.service.FoodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,24 +19,58 @@ public class FoodController {
     private final FoodService foodService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Food addFood(@RequestBody Food food){
-        return foodService.addFood(food);
+    public ResponseEntity<ApiResponse<Food>> addFood(@RequestBody Food food){
+        Food addFood =  foodService.addFood(food);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>("Food added successfully",
+                        HttpStatus.CREATED,
+                        role,
+                        addFood));
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<Food> getAllFoods(){
-        return foodService.getAllFoods();
+    public ResponseEntity<ApiResponse<List<Food>>> getAllFoods(){
+        List<Food> getAllFoods = foodService.getAllFoods();
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Foods fetched successfully",
+                        HttpStatus.ACCEPTED,
+                        role,
+                        getAllFoods)
+        );
     }
 
     @GetMapping("/available")
-    public List<Food> getAvailableFoods(){
-        return foodService.getAvailableFoods();
+    public ResponseEntity<ApiResponse<List<Food>>> getAvailableFoods(){
+        List<Food> getAvailableFoods = foodService.getAvailableFoods();
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Available Foods",
+                        HttpStatus.MULTIPLE_CHOICES,
+                        role,
+                        getAvailableFoods
+                )
+        );
     }
 
     @PostMapping("{id}")
-    public Food getFoodById(@PathVariable Long id){
-        return foodService.getFoodById(id);
+    public ResponseEntity<ApiResponse<Food>> getFoodById(@PathVariable Long id){
+        Food getFoodById = foodService.getFoodById(id);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Foods fetched By Id",
+                        HttpStatus.CONTINUE,
+                        role,
+                        getFoodById
+                )
+        );
     }
 }

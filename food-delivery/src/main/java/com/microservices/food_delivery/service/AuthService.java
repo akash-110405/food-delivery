@@ -1,9 +1,12 @@
 package com.microservices.food_delivery.service;
 
+import com.microservices.food_delivery.dto.AuthResponse;
 import com.microservices.food_delivery.entity.User;
 import com.microservices.food_delivery.repository.UserRepository;
 import com.microservices.food_delivery.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -19,7 +22,7 @@ public class AuthService {
     private final SmsService smsService;
     private final JwtUtil jwtUtil;
 
-    public String loginWithEmailPassword(String email, String password) {
+    public AuthResponse loginWithEmailPassword(String email, String password) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -33,10 +36,15 @@ public class AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        return jwtUtil.generateToken(
+        String token =  jwtUtil.generateToken(
                 user.getEmail(),
                 user.getTokenVersion()
         );
+
+        return new AuthResponse("Authorized successfulluy",
+                HttpStatus.SC_OK,
+                user.getRole().name(),
+                token);
     }
 
     public String requestEmailOtp(String email) {
@@ -55,7 +63,7 @@ public class AuthService {
         return "OTP sent to email";
     }
 
-    public String verifyEmailOtp(String email, String otp) {
+    public AuthResponse verifyEmailOtp(String email, String otp) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -66,10 +74,14 @@ public class AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        return jwtUtil.generateToken(
+        String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getTokenVersion()
         );
+        return new AuthResponse("Authorized successfully",
+                HttpStatus.SC_ACCEPTED,
+                user.getRole().name(),
+                token);
     }
 
     public String requestPhoneOtp(String phone) {
@@ -88,7 +100,7 @@ public class AuthService {
         return "OTP sent to phone";
     }
 
-    public String verifyPhoneOtp(String phone, String otp) {
+    public AuthResponse verifyPhoneOtp(String phone, String otp) {
 
         User user = userRepository.findByPhoneNumber(phone)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -98,17 +110,20 @@ public class AuthService {
         System.out.println("ROLE = " + user.getRole());
         System.out.println("TOKEN_VERSION = " + user.getTokenVersion());
 
-
         validateOtp(user, otp);
         clearOtp(user);
 
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        return jwtUtil.generateToken(
+        String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getTokenVersion()
         );
+        return new AuthResponse("Authorized successfully",
+                HttpStatus.SC_ACCEPTED,
+                user.getRole().name(),
+                token);
     }
 
     private void validateOtp(User user, String otp) {
