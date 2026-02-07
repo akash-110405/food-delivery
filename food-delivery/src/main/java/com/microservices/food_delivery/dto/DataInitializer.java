@@ -17,7 +17,6 @@ public class DataInitializer  implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // ADMIN
         if (!userRepository.existsByEmail("admin@gmail.com")) {
             User admin = new User();
             admin.setName("LUFFY");
@@ -28,7 +27,6 @@ public class DataInitializer  implements CommandLineRunner {
             userRepository.save(admin);
         }
 
-        // CHEF
         if (!userRepository.existsByEmail("chef@gmail.com")) {
             User chef = new User();
             chef.setName("SANJI");
