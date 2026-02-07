@@ -26,4 +26,7 @@ public class FoodService {
         return foodRepository.findById(id).
                 orElseThrow(() -> new RuntimeException("Food not found"));
     }
+    public void removeFood(Long id) {
+         foodRepository.deleteById(id);
+    }
 }

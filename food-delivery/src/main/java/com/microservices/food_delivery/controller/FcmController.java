@@ -27,7 +27,7 @@ public class FcmController {
         String email = authentication.getName(); // JWT subject
         String role = SecurityUtil.getCurrentUserRole();
 
-        fcmTokenService.saveToken(email,token);
+        fcmTokenService.saveToken(token,email);
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
@@ -39,5 +39,3 @@ public class FcmController {
         );
     }
 }
-
-

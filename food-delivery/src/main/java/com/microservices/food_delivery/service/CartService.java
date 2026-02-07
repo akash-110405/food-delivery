@@ -45,7 +45,7 @@ public class CartService {
         return cartRepository.findByUserId(user.getId());
     }
 
-    public void removeCartItem(Long cartId) {
+    public void removeItem(Long cartId) {
         cartRepository.deleteById(cartId);
     }
 
@@ -53,7 +53,4 @@ public class CartService {
         cartRepository.findByUserId(userId)
                 .forEach(cartRepository::delete);
     }
-
-
 }
-

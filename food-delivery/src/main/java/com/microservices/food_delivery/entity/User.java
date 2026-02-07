@@ -38,6 +38,7 @@ public class User {
     private Integer tokenVersion = 0;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Role role;
     private LocalDateTime create_at;
 

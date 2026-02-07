@@ -7,6 +7,7 @@ import com.microservices.food_delivery.service.FoodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public class FoodController {
     private final FoodService foodService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Food>> addFood(@RequestBody Food food){
-        Food addFood =  foodService.addFood(food);
+    @PreAuthorize("hasAnyRole('ADMIN','CHEF')")
+    public ResponseEntity<ApiResponse<Food>> addFood(@RequestBody Food food) {
+        Food addFood = foodService.addFood(food);
         String role = SecurityUtil.getCurrentUserRole();
 
         return ResponseEntity.ok(
@@ -31,7 +33,7 @@ public class FoodController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Food>>> getAllFoods(){
+    public ResponseEntity<ApiResponse<List<Food>>> getAllFoods() {
         List<Food> getAllFoods = foodService.getAllFoods();
         String role = SecurityUtil.getCurrentUserRole();
 
@@ -45,7 +47,7 @@ public class FoodController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<ApiResponse<List<Food>>> getAvailableFoods(){
+    public ResponseEntity<ApiResponse<List<Food>>> getAvailableFoods() {
         List<Food> getAvailableFoods = foodService.getAvailableFoods();
         String role = SecurityUtil.getCurrentUserRole();
 
@@ -59,8 +61,8 @@ public class FoodController {
         );
     }
 
-    @PostMapping("{id}")
-    public ResponseEntity<ApiResponse<Food>> getFoodById(@PathVariable Long id){
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<Food>> getFoodById(@PathVariable Long id) {
         Food getFoodById = foodService.getFoodById(id);
         String role = SecurityUtil.getCurrentUserRole();
 
@@ -70,6 +72,23 @@ public class FoodController {
                         HttpStatus.CONTINUE,
                         role,
                         getFoodById
+                )
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','CHEF')")
+    public ResponseEntity<ApiResponse<String>> removeFood(@PathVariable Long id) {
+
+        foodService.removeFood(id);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Food was removed",
+                        HttpStatus.OK,
+                        role,
+                        "Deleted successfully"
                 )
         );
     }
