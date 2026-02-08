@@ -23,4 +23,3 @@ public class FcmToken {
     @Column(nullable = false, unique = true)
     private String token;
 }
-

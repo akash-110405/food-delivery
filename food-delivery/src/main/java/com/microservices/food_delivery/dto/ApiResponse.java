@@ -16,6 +16,4 @@ public class ApiResponse<D> {
     private HttpStatus statusCode;
     private String role;
     private D data;
-
-
 }
