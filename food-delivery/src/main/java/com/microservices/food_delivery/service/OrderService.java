@@ -50,4 +50,7 @@ public class OrderService {
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
+    public List<Order> getOrdersByUserId(Long userId){
+        return orderRepository.findByUserId(userId);
+    }
 }

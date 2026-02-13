@@ -32,6 +32,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         AuthResponse response = authService.loginWithEmailPassword(
+                request.getName(),
                 request.getEmail(),
                 request.getPassword()
         );
@@ -56,18 +57,14 @@ public class AuthController {
     }
 
     @PostMapping("/phone/request-otp")
-    public String requestPhoneOtp(@RequestBody PhoneOtpRequest request) {
-        return authService.requestPhoneOtp(request.getPhoneNumber());
+    public ResponseEntity<String> requestPhoneOtp(@RequestBody PhoneOtpRequest req){
+        return ResponseEntity.ok(authService.requestPhoneOtp(req.getPhoneNumber()));
     }
 
     @PostMapping("/phone/verify-otp")
-    public ResponseEntity<AuthResponse> verifyPhoneOtp(
-            @RequestBody PhoneOtpVerifyRequest request) {
-
-        AuthResponse response = authService.verifyPhoneOtp(
-                request.getPhoneNumber(),
-                request.getOtp()
-        );
-        return ResponseEntity.ok(response);
+    public ResponseEntity<AuthResponse> verifyPhoneOtp(@RequestBody PhoneOtpVerifyRequest req){
+        return ResponseEntity.ok(authService.verifyPhoneOtp(
+                req.getPhoneNumber(), req.getOtp()
+        ));
     }
 }

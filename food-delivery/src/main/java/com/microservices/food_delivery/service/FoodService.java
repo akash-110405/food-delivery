@@ -1,7 +1,9 @@
 package com.microservices.food_delivery.service;
 
 import com.microservices.food_delivery.entity.Food;
+import com.microservices.food_delivery.entity.User;
 import com.microservices.food_delivery.repository.FoodRepository;
+import com.microservices.food_delivery.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.List;
 public class FoodService {
 
     private final FoodRepository foodRepository;
+    private final UserRepository userRepository;
 
     public Food addFood(Food food){
         return foodRepository.save(food);
@@ -27,6 +30,10 @@ public class FoodService {
                 orElseThrow(() -> new RuntimeException("Food not found"));
     }
     public void removeFood(Long id) {
+        Food food = foodRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Food not found"));
+
+         food.setAvailable(false);
          foodRepository.deleteById(id);
     }
 }

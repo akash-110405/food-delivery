@@ -27,8 +27,6 @@ public class Food {
     private String description;
     private String image_url;
     private Long categoryId;
-
-    @Column(nullable = false)
     private Boolean available;
 
 }

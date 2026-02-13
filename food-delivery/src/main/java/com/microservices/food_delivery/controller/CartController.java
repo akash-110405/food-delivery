@@ -3,6 +3,7 @@ package com.microservices.food_delivery.controller;
 import com.microservices.food_delivery.dto.ApiResponse;
 import com.microservices.food_delivery.dto.CartRequest;
 import com.microservices.food_delivery.entity.Cart;
+import com.microservices.food_delivery.entity.Order;
 import com.microservices.food_delivery.security.SecurityUtil;
 import com.microservices.food_delivery.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -45,11 +46,10 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Cart>>> viewCart(
+    public ResponseEntity<ApiResponse<List<Cart>>> getAllCart(
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        String email = userDetails.getUsername();
-        List<Cart> viewCart = cartService.getUserCart(email);
+        List<Cart> getAllCart = cartService.getAllCart();
         String role = SecurityUtil.getCurrentUserRole();
 
         return ResponseEntity.ok(
@@ -57,7 +57,7 @@ public class CartController {
                         "Cart Viewed",
                         HttpStatus.CONTINUE,
                         role,
-                        viewCart
+                        getAllCart
                 )
         );
     }
@@ -75,6 +75,22 @@ public class CartController {
                         HttpStatus.OK,
                         role,
                         "Deleted successfully"
+                )
+        );
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<Cart>>> getCartByUserId(@PathVariable Long userId) {
+
+        List<Cart> carts = cartService.getCartByUserId(userId);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Orders fetched by userId",
+                        HttpStatus.OK,
+                        role,
+                        carts
                 )
         );
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping ("/api/orders")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -21,7 +21,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<Order>> placeOrder(@RequestBody OrderRequest orderRequest,
-                                                         Authentication authentication){
+                                                         Authentication authentication) {
 
         String email = authentication.getName();
         Order placeOrder = orderService.placeOrder(email, orderRequest.getTotalAmount(),
@@ -38,9 +38,10 @@ public class OrderController {
                 )
         );
     }
+
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Order>>> getAllOrders(){
-        List<Order> getAllOrders =  orderService.getAllOrders();
+    public ResponseEntity<ApiResponse<List<Order>>> getAllOrders() {
+        List<Order> getAllOrders = orderService.getAllOrders();
         String role = SecurityUtil.getCurrentUserRole();
 
         return ResponseEntity.ok(
@@ -54,7 +55,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<List<Order>>> getOrderItems(@PathVariable Long orderId){
+    public ResponseEntity<ApiResponse<List<Order>>> getOrderItems(@PathVariable Long orderId) {
         List<Order> getOrderItems = orderService.getItemsByOrder(orderId);
         String role = SecurityUtil.getCurrentUserRole();
 
@@ -64,6 +65,22 @@ public class OrderController {
                         HttpStatus.MULTIPLE_CHOICES,
                         role,
                         getOrderItems
+                )
+        );
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<Order>>> getOrderByUserId(@PathVariable Long userId) {
+
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Orders fetched by userId",
+                        HttpStatus.OK,
+                        role,
+                        orders
                 )
         );
     }

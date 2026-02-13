@@ -53,4 +53,12 @@ public class CartService {
         cartRepository.findByUserId(userId)
                 .forEach(cartRepository::delete);
     }
+
+    public List<Cart> getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId);
+    }
+
+    public List<Cart> getAllCart() {
+        return cartRepository.findAll();
+    }
 }

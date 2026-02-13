@@ -1,12 +1,12 @@
 package com.microservices.food_delivery.service;
 
 import com.microservices.food_delivery.dto.AuthResponse;
+import com.microservices.food_delivery.entity.Role;
 import com.microservices.food_delivery.entity.User;
 import com.microservices.food_delivery.repository.UserRepository;
 import com.microservices.food_delivery.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -22,16 +22,24 @@ public class AuthService {
     private final SmsService smsService;
     private final JwtUtil jwtUtil;
 
-    public AuthResponse loginWithEmailPassword(String email, String password) {
+    public AuthResponse loginWithEmailPassword(String email, String password, String requestPassword) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        if (user.getPassword() == null)
-            throw new RuntimeException("Password login not enabled");
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setRole(Role.USER);
+            user.setTokenVersion(0);
+            userRepository.save(user);
+        }
 
-        if (!passwordEncoder.matches(password, user.getPassword()))
-            throw new RuntimeException("Invalid password");
+        else {
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new RuntimeException("Invalid credentials");
+            }
+        }
 
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
@@ -86,8 +94,15 @@ public class AuthService {
 
     public String requestPhoneOtp(String phone) {
 
-        User user = userRepository.findByPhoneNumber(phone)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByPhoneNumber(phone).orElse(null);
+
+        if (user == null) {
+            user = new User();
+            user.setPhoneNumber(phone);
+            user.setRole(Role.USER);
+            user.setTokenVersion(0);
+            userRepository.save(user);
+        }
 
         String otp = otpService.generateOtp();
 
@@ -117,7 +132,7 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(
-                user.getEmail(),
+                phone,
                 user.getTokenVersion()
         );
         return new AuthResponse("Authorized successfully",
