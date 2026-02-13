@@ -24,19 +24,20 @@ public class User {
     private Long id;
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
-    @Column( unique = true,length = 15)
+    @Column(unique = true,length = 15)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @JsonIgnore
     private String password;
 
     @Column(length = 6)
     @JsonIgnore
     private String otp;
+
     @JsonIgnore
     private LocalDateTime otpexpiry;
 

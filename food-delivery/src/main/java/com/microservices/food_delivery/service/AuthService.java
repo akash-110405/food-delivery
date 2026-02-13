@@ -22,30 +22,40 @@ public class AuthService {
     private final SmsService smsService;
     private final JwtUtil jwtUtil;
 
-    public AuthResponse loginWithEmailPassword(String email, String password, String requestPassword) {
+    public AuthResponse loginWithEmailPassword(String name,String email,String phoneNumber,String password) {
+
+        System.out.println("PHONE FROM REQUEST = " + phoneNumber);
 
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             user = new User();
             user.setEmail(email);
+            user.setName(name);
+            if (phoneNumber != null && !phoneNumber.isBlank()) {
+                user.setPhoneNumber(phoneNumber);
+            }
             user.setPassword(passwordEncoder.encode(password));
             user.setRole(Role.USER);
             user.setTokenVersion(0);
             userRepository.save(user);
         }
 
-        else {
-            if (!passwordEncoder.matches(password, user.getPassword())) {
-                throw new RuntimeException("Invalid credentials");
-            }
+     else {
+        if (user.getPassword() == null) {
+            throw new RuntimeException("Account registered via OTP. Use OTP login.");
         }
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+    }
 
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        String token =  jwtUtil.generateToken(
-                user.getEmail(),
+        String token = jwtUtil.generateToken(
+                user.getId().toString(),
                 user.getTokenVersion()
         );
 
@@ -57,8 +67,15 @@ public class AuthService {
 
     public String requestEmailOtp(String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            user = new User();
+            user.setEmail(email);
+            user.setRole(Role.USER);
+            user.setTokenVersion(0);
+            userRepository.save(user);
+        }
 
         String otp = otpService.generateOtp();
 
@@ -83,9 +100,10 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getTokenVersion()
         );
+
         return new AuthResponse("Authorized successfully",
                 HttpStatus.SC_ACCEPTED,
                 user.getRole().name(),
@@ -132,9 +150,10 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(
-                phone,
+                user.getId().toString(),
                 user.getTokenVersion()
         );
+
         return new AuthResponse("Authorized successfully",
                 HttpStatus.SC_ACCEPTED,
                 user.getRole().name(),

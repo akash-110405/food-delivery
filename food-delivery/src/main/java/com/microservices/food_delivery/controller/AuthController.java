@@ -34,6 +34,7 @@ public class AuthController {
         AuthResponse response = authService.loginWithEmailPassword(
                 request.getName(),
                 request.getEmail(),
+                request.getPhoneNumber(),
                 request.getPassword()
         );
         return ResponseEntity.ok(response);
