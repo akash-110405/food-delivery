@@ -24,7 +24,8 @@ public class OrderController {
                                                          Authentication authentication) {
 
         String email = authentication.getName();
-        Order placeOrder = orderService.placeOrder(email, orderRequest.getTotalAmount(),
+        Order placeOrder = orderService.placeOrder(email,
+                orderRequest.getTotalAmount(),
                 orderRequest.getFoodId(),
                 orderRequest.getQuantity());
         String role = SecurityUtil.getCurrentUserRole();
@@ -35,6 +36,26 @@ public class OrderController {
                         HttpStatus.CONTINUE,
                         role,
                         placeOrder
+                )
+        );
+    }
+    @PutMapping
+    public ResponseEntity<ApiResponse<Order>> updateOrder(@RequestBody OrderRequest orderRequest,
+                                                         Authentication authentication) {
+
+        String email = authentication.getName();
+        Order updateOrder = orderService.updateOrder(email,
+                orderRequest.getTotalAmount(),
+                orderRequest.getFoodId(),
+                orderRequest.getQuantity());
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Order placed successfully",
+                        HttpStatus.CONTINUE,
+                        role,
+                        updateOrder
                 )
         );
     }

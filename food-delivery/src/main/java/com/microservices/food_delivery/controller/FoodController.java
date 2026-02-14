@@ -33,6 +33,18 @@ public class FoodController {
                         role,
                         addFood));
     }
+    @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN','CHEF')")
+    public ResponseEntity<ApiResponse<Food>> updateFood(@RequestBody Food food) {
+        Food updateFood = foodService.updateFood(food);
+        String role = SecurityUtil.getCurrentUserRole();
+
+        return ResponseEntity.ok(
+                new ApiResponse<>("Food added successfully",
+                        HttpStatus.CREATED,
+                        role,
+                        updateFood));
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Food>>> getAllFoods() {

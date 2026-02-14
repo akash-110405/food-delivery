@@ -52,4 +52,8 @@ public class User {
     public void onCreate() {
         this.create_at = LocalDateTime.now();
     }
+
+    public String getIdentity() {
+        return this.email != null ? this.email : this.phoneNumber;
+    }
 }

@@ -14,9 +14,11 @@ import java.util.List;
 public class FoodService {
 
     private final FoodRepository foodRepository;
-    private final UserRepository userRepository;
 
     public Food addFood(Food food){
+        return foodRepository.save(food);
+    }
+    public Food updateFood(Food food){
         return foodRepository.save(food);
     }
     public List<Food> getAllFoods(){

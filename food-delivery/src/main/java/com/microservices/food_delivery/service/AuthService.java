@@ -54,10 +54,12 @@ public class AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(
-                user.getId().toString(),
-                user.getTokenVersion()
-        );
+        String subject = user.getEmail() != null
+                ? user.getEmail()
+                : user.getPhoneNumber();
+
+        String token = jwtUtil.generateToken(subject, user.getTokenVersion());
+
 
         return new AuthResponse("Authorized successfulluy",
                 HttpStatus.SC_OK,
@@ -78,12 +80,14 @@ public class AuthService {
         }
 
         String otp = otpService.generateOtp();
+        LocalDateTime expiry = otpService.expiryTime();
 
         user.setOtp(otp);
-        user.setOtpexpiry(otpService.expiryTime());
-        userRepository.save(user);
+        user.setOtpexpiry(expiry);
+        userRepository.saveAndFlush(user);
 
         emailService.sendOtp(email, otp);
+
 
         return "OTP sent to email";
     }
@@ -99,10 +103,8 @@ public class AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(
-                user.getId().toString(),
-                user.getTokenVersion()
-        );
+        String token = jwtUtil.generateToken(user.getEmail(), user.getTokenVersion());
+
 
         return new AuthResponse("Authorized successfully",
                 HttpStatus.SC_ACCEPTED,
@@ -123,10 +125,11 @@ public class AuthService {
         }
 
         String otp = otpService.generateOtp();
+        LocalDateTime expiry = otpService.expiryTime();
 
         user.setOtp(otp);
-        user.setOtpexpiry(otpService.expiryTime());
-        userRepository.save(user);
+        user.setOtpexpiry(expiry);
+        userRepository.saveAndFlush(user);
 
         smsService.sendOtp(phone, otp);
 
@@ -149,10 +152,7 @@ public class AuthService {
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.save(user);
 
-        String token = jwtUtil.generateToken(
-                user.getId().toString(),
-                user.getTokenVersion()
-        );
+        String token = jwtUtil.generateToken(user.getPhoneNumber(), user.getTokenVersion());
 
         return new AuthResponse("Authorized successfully",
                 HttpStatus.SC_ACCEPTED,
@@ -175,6 +175,7 @@ public class AuthService {
     private void clearOtp(User user) {
         user.setOtp(null);
         user.setOtpexpiry(null);
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
+
     }
 }

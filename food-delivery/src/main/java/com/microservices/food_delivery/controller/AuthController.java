@@ -58,14 +58,14 @@ public class AuthController {
     }
 
     @PostMapping("/phone/request-otp")
-    public ResponseEntity<String> requestPhoneOtp(@RequestBody PhoneOtpRequest req){
-        return ResponseEntity.ok(authService.requestPhoneOtp(req.getPhoneNumber()));
+    public ResponseEntity<String> requestPhoneOtp(@RequestBody PhoneOtpRequest request){
+        return ResponseEntity.ok(authService.requestPhoneOtp(request.getPhoneNumber()));
     }
 
     @PostMapping("/phone/verify-otp")
-    public ResponseEntity<AuthResponse> verifyPhoneOtp(@RequestBody PhoneOtpVerifyRequest req){
+    public ResponseEntity<AuthResponse> verifyPhoneOtp(@RequestBody PhoneOtpVerifyRequest request){
         return ResponseEntity.ok(authService.verifyPhoneOtp(
-                req.getPhoneNumber(), req.getOtp()
+                request.getPhoneNumber(), request.getOtp()
         ));
     }
 }

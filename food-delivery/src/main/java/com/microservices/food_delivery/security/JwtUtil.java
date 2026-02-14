@@ -10,19 +10,21 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final Key key = Keys.hmacShaKeyFor("secret-key-jwt-authorize-secret-key-jwt-authorize".getBytes());
+    private final Key key = Keys.hmacShaKeyFor(
+            "secret-key-jwt-authorize-secret-key-jwt-authorize".getBytes()
+    );
 
-    public String generateToken(String email , Integer tokenVersion){
-
+    public String generateToken(String subject , Integer tokenVersion){
         return Jwts.builder()
-                .setSubject(email)
-                .claim("version",tokenVersion)
+                .setSubject(subject) // email OR phone
+                .claim("version", tokenVersion)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(key)
                 .compact();
     }
-    public String extractEmail(String token){
+
+    public String extractSubject(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -39,5 +41,4 @@ public class JwtUtil {
                 .getBody()
                 .get("version", Integer.class);
     }
-
 }

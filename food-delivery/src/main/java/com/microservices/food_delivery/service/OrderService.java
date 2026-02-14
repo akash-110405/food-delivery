@@ -38,6 +38,25 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
+    public Order updateOrder(String email,
+                            Double totalAmount, Long foodId, Integer quantity){
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Food food = foodRepository.findById(foodId)
+                .orElseThrow(() -> new RuntimeException("Food not Found"));
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setTotalAmount(totalAmount);
+        order.setStatus(OrderStatus.PLACED);
+        order.setPaymentStatus(PaymentStatus.PENDING);
+        order.setFood(food);
+        order.setQuantity(quantity);
+
+        return orderRepository.save(order);
+    }
 
     public Optional<Order> getOrders(Long id) {
         return orderRepository.findById(id);
